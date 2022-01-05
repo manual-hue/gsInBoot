@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorator="layout/layout1">
+
+<div layout:fragment="content">
+    <style>
+        .form-group img { width: 650px; order: 1; }
+        .right-content { order: 2; margin-left: 20px; }
+        .goal-section { display: flex; flex-direction: row; }
+        .fund-info { height: 400px;}
+        .fund-info .right-content { height: 400px; }
+        .main-title .form-control {
+            text-align: center;
+            border: 1px solid #ffffff;
+            background-color: transparent; }
+        a{ color: white; }
+        .pagination { float: right; }
+        #inputTag {
+            color: #7cafcd;
+            font-weight: bold;
+            max-width:200px;
+            max-height: 300px;
+            overflow: overlay;
+            word-break: break-all;
+            word-wrap: break-word;
+        }
+    </style>
+
+    <div id="wrapper" style="width: 80%; margin: 0 auto; margin-bottom: 60px; margin-top: 60px" >
+            <div class="form-group main-title">
+                <input type="text" id="fregdate" th:value="${#temporals.format(dto.fregdate, 'yyyy/MM/dd HH:mm:ss')}" style="" class="form-control" disabled>
+                <input type="text" th:value="${dto.ftitle}" style="height: 80px; font-size: xx-large; font-weight: bold;" class="form-control" id="inputPassword4" disabled>
+                <input type="text" th:value="${dto.fwriter}" class="form-control" id="inputAddress" disabled>
+            </div>
+
+<!--        썸네일, 모인금액, 남은시간, 조회수 -->
+            <div class="form-row fund-info">
+                <div class="form-group" id="imgThumb" style="order:1;">
+                </div>
+                <div class="right-content">
+                <div class="form-group">
+                    <h6>모인 금액</h6>
+                    <div class="goal-section">
+                        <div style="font-size: x-large;" id="goalPrice">0</div><div style="font-size: x-large;">원</div>
+                        <div style="margin-top: revert;" id="goalPercent">0</div>%
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>종료까지 남은 시간</label>
+                    <div style="font-size: x-large;" id="timeDeal"></div>
+                </div>
+                <div class="form-group">
+                    <label for="fprice2">후원자</label>
+                    <div style="font-size: x-large;" id="fprice2">0명</div>
+                </div>
+                <div class="form-group">
+                    <h6 id="fprice3">[[${dto.fcount}]]명이 이 프로젝트를 보고 있어요!</h6>
+                </div>
+                    <script>
+                        function share() {
+                            var url = encodeURI(encodeURIComponent(myform.url.value));
+                            var title = encodeURI('[G-STREET] '+myform.title.value);
+                            var shareURL = "https://share.naver.com/web/shareView?url=" + url + "&title=" + title;
+                            document.location = shareURL;
+                        }
+                    </script>
+                    <div class="projectMenu" style="display: inline-grid">
+                    <form id="myform">
+                        <input type="hidden" id="url" value="http://localhost:8080/fundboard/read?fno=${fno}"><br/>
+                        <input type="hidden" id="title" th:value="${dto.ftitle}"><br/>
+                        <div class="btn" style="cursor: pointer; background-color: #03c75a; border: transparent">
+                            <img th:src="@{/assets/img/naver.png}" style="width: 30px; cursor: pointer;" onclick="share()"/> 네이버 블로그에 공유하기
+                        </div>
+                    </form>
+                    <button class="btn btn-danger" onclick="redirectPayment()">이 프로젝트 후원하기</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row" style="display: inline-flex; flex-direction:row; flex-wrap: wrap; margin-top: inherit;">
+                    <div class="form-group col-md-8" style="order:1;">
+                        <label for="fcontent">프로젝트 계획</label>
+                        <div class="form-group" id="fcontent" style="overflow: auto;" th:utext="${dto.fcontent}"></div>
+                    </div>
+                <div class="right-content2 col-md-3" style="order:2; margin-left: 66px; margin-top: 40px;">
+                    <div class="form-group">
+                        <label for="inputTag">hashtag</label>
+                        <div class="li" id="inputTag" th:each="tag:${dto.ftags}">[[${tag}]]</div>
+                        <label for="fprice" style="margin-top: 20px">price</label>
+                        <div class="form-control" id="fprice" style="width: 200px; height: fit-content;" disabled>[[${dto.fproduct}]]<br>[[${dto.fprice}]]원</div>
+                    </div>
+                </div>
+            </div>
+
+        <div class="card card-nav-tabs">
+            <div class="card-header card-header-success">
+                Reply
+            </div>
+            <div class="card-body">
+                <ul class="list-group replyUL">
+
+                </ul>
+                <div class="card-body">
+
+                </div>
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">2 <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div class="input-group mb-3">
+                <span class="input-group-text">작성자</span>
+                <input type="text" name="freplyer" class="form-control">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">내용</span>
+                <input type="text" name="freplyText" class="form-control">
+            </div>
+            <div  class="input-group mb-3">
+                <button class="btn btn-primary" onclick="registerReply()">Reply Register</button>
+            </div>
+        </div>
+        <div class="float-end hiddens">
+            <button type="button" style="display: inline-block;" class="btn btn-primary"><a th:href="@{/fundboard/list}"><i class="fas fa-undo-alt"></i></a></button>
+
+            <button type="button" style="float:right; display: inline-block;" class="btn btn-primary" onclick="deleteFund()"><i class="fas fa-trash-alt"></i></button>
+            <button type="button" style="float:right; margin-right: 3px; display: inline-block;" class="btn btn-primary" th:onclick="|modify(${dto.fno})|"><i class="fas fa-pen-square"></i></button>
+        </div>
+        <!-- 전체 div-->
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script th:inline="javascript"> // 썸네일용 content 내 img 태그 추출
+
+    var content = [[${dto.fcontent}]] // 컨텐츠 추출, 백틱으로 문자열 그대로 추출
+
+    const tempArr = [[${dto.imageTags}]]
+
+    console.log(tempArr) //content 내의 모든 img src 태그 배열로써 추출
+    console.log(tempArr[0]) //첫번째 이미지
+
+    str = ''
+
+    if(tempArr.includes('data')){
+            str += `<div style="width: 650px; height: 400px; overflow: hidden">`
+            str += `<img th:src="`
+            str += tempArr[0]
+            str += `">`
+            str += "</div>"
+    }else{
+            str += "<div>"
+            str += `<img style="width: 650px; height: 400px;" src="`
+            str += tempArr[0]
+            str += `">`
+            str += "</div>"
+    }
+
+    document.querySelector("#imgThumb").innerHTML = str
+
+    </script>
+
+    <script th:inline="javascript"> // 남은 시간 계산
+
+    function countDownTimer(dt, id) {
+        var end = new Date(dt);
+        var _second = 1000;
+        var _minute = _second * 60;
+        var _hour = _minute * 60;
+        var _day = _hour * 24;
+        var timer;
+        function showRemaining() {
+            var now = new Date();
+            var distance = end - now;
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById(id).innerHTML = '이미 종료된 펀딩입니다.';
+                return;
+            }
+            var days = Math.floor(distance / _day);
+            var hours = Math.floor((distance % _day) / _hour);
+            var minutes = Math.floor((distance % _hour) / _minute);
+            var seconds = Math.floor((distance % _minute) / _second);
+            document.getElementById(id).innerHTML = days + '일 ';
+            document.getElementById(id).innerHTML += hours + '시간 ';
+            document.getElementById(id).innerHTML += minutes + '분 ';
+            document.getElementById(id).innerHTML += seconds + '초';
+        }
+        timer = setInterval(showRemaining, 1000);
+    }
+
+    var fenddate = '[[${dto.fenddate}]]'
+    var enddate = fenddate.replace('T', ' ')
+    console.log('종료일: '+'[[${dto.fenddate}]]')
+
+    countDownTimer(enddate, 'timeDeal');
+    </script>
+
+    <script th:inline="javascript">
+        function calcPercent(){// 달성율 계산
+            var goalPrice = document.querySelector('#goalPercent').value
+            var price = [[${dto.fprice}]]
+
+            var total = goalPrice/price
+
+            document.querySelector('#goalPrice').innerHTML +total
+        }
+        calcPercent()
+
+    function redirectPayment(){// 후원 페이지로 가기
+            location.href='/fundboard/payment'
+    }
+    </script>
+
+    <script th:inline="javascript"> // 댓글 페이징
+        function modify(fno){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+            self.location=`/fundboard/modify?fno=${fno}&page=${page}&size=${size}`+searchQuery
+        }
+
+        function moveList(){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/fundboard/list?page=${page}&size=${size}` + searchQuery
+
+        }
+
+    </script>
+
+    <script th:inline="javascript"> // 글 삭제 axios
+
+    function deleteFund(){
+        async function sendDeleteFund() {
+
+            const response = await axios.post(`/fundboard/remove/${fno}`)
+            self.location=`/fundboard/list`
+
+            alert('펀딩이 삭제되었습니다!');
+
+            const PageResponse = await response.data
+
+            console.log("pageResponse: "+PageResponse)
+
+        }
+        sendDeleteFund()
+    }
+
+    </script>
+
+    <script th:inline="javascript"> // 댓글 처리
+
+        const fno = [[${dto.fno}]]
+        let replyPage = 1
+        let replySize = 10
+
+        function makeListAndPaging(replyPageResponse){
+            const dtoList = replyPageResponse.dtoList
+
+            replyPage = replyPageResponse.page
+            size = replyPageResponse.size
+
+            console.log(dtoList)
+
+            let str = ""
+
+            for (const reply of dtoList) {
+                console.log(reply)
+                str += "<li class='list-group-item d-flex justify-content-between align-items-center'>"
+                str += `<div class="replyBox col-md-12" data-frno="${reply.frno}"><span>${reply.frno}</span> <span class="rtext">${reply.freplyText}</span>
+                        <button class="btn btn-sm btn-warning" onclick="modifyReply(this)">수정</button>
+                        </div>`
+                str += "</li>"
+
+            }
+
+            //console.log(str)
+            document.querySelector(".replyUL").innerHTML = str
+
+            //paging
+            const pagination = document.querySelector(".pagination")
+            let pageStr = ""
+
+            //prev
+            if(replyPageResponse.prev){
+                pageStr += `<li class="page-item"><a class="page-link"  href="javascript:getList(${replyPageResponse.start -1})" tabindex="-1">Previous</a></li>`
+            }
+            //num
+            for(let i = replyPageResponse.start; i<= replyPageResponse.end; i++){
+                pageStr += `<li class="page-item ${i==replyPageResponse.page?"active":""} "><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
+            }
+
+            //next
+            if(replyPageResponse.next){
+                pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.end +1})" tabindex="-1">Next</a></li>`
+            }
+
+            pagination.innerHTML = pageStr
+        }
+
+
+        async function getList(pageNum) {
+
+            const response = await axios.get(`/replies3/list/${fno}?page=${pageNum}`)
+            const replyPageResponse = await response.data
+
+            console.log(replyPageResponse)
+
+            makeListAndPaging(replyPageResponse)
+
+        }
+
+        function registerReply(){
+
+            const replyObj = {fno:fno,
+                freplyer: document.querySelector("input[name='freplyer']").value,
+                freplyText: document.querySelector("input[name='freplyText']").value,
+            }
+
+            async  function registerAjax(){
+                const response = await axios.post("/replies3", replyObj)
+                const replyPageResponse = await response.data
+                makeListAndPaging(replyPageResponse)
+                document.querySelector("input[name='freplyer']").value =""
+                document.querySelector("input[name='freplyText']").value =""
+            }
+
+            registerAjax();
+
+        }
+
+        let cloneReply = null
+        let targetLi = null;
+
+        function modifyReply(ele){
+
+            const targetDiv = ele.closest(".replyBox")
+            const currentTargetLi = ele.closest("li")
+
+            if(targetLi === null){
+                targetLi = currentTargetLi
+            }else if(targetLi !== currentTargetLi){
+                //alert("기존의 댓글 수정 강제 취소")
+
+                targetLi.querySelector("div").remove()
+                targetLi.appendChild(cloneReply)
+
+                targetLi = currentTargetLi
+            }
+
+            cloneReply = targetDiv.cloneNode(true)
+
+            const freplyText = targetDiv.querySelector(".rtext").innerHTML
+            const frno = targetDiv.getAttribute("data-frno")
+            //댓글의 번호와 댓글 원본 내용
+            //console.log(rno, replyText)
+
+            const modifyForm = `<div><input type="text" class="editText" value="${freplyText}">
+      <button onclick="modifyReplySend(this)">수정</button>
+      <button onclick="deleteReply()">삭제</button>
+      <button onclick="cancelModifyReply(this)">취소</button> </div>`
+
+            targetLi.innerHTML = modifyForm
+
+        }
+
+        function cancelModifyReply(ele){
+
+            ele.closest("div").remove()
+
+            //targetLi의 안쪽 elemement 삭제
+            targetLi.appendChild(cloneReply)
+
+        }
+
+        function deleteReply(){
+            const frno = cloneReply.getAttribute("data-frno")
+
+            async function sendDeleteReply() {
+                const response = await axios.delete(`/replies3/${fno}/${frno}?page=${replyPage}&size=${replySize}`)
+                const replyPageResponse = await response.data
+
+                alert("댓글이 삭제되었습니다.")
+                console.log(replyPageResponse)
+
+                makeListAndPaging(replyPageResponse)
+            }
+            sendDeleteReply()
+        }
+
+        function modifyReplySend(ele){
+            const frno = cloneReply.getAttribute("data-frno")
+            const freplyText = document.querySelector(".editText").value
+
+            //{rno:rno, replyText:replyText}
+            const replyObj = {frno, freplyText, fno}
+
+            async function updateReply() {
+
+                const response = await axios.put(`/replies3/${fno}/${frno}?page=${replyPage}&size=${replySize}`, replyObj)
+                const replyPageResponse = await response.data
+
+                alert("댓글이 수정되었습니다.")
+                console.log(replyPageResponse)
+
+                makeListAndPaging(replyPageResponse)
+            }
+            updateReply()
+
+        }
+
+        getList(-1)
+
+    </script>
+
+    <script th:inline="javascript">
+        function modify(fno){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/fundboard/modify?fno=${fno}&page=${page}&size=${size}`+searchQuery
+
+        }
+    </script>
+</th:block>

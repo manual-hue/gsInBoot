@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+<div layout:fragment="content">
+    <div class="card-header">
+        INBOX
+    </div>
+
+<style>
+    table,tr,td{
+        margin-left: auto;
+        margin-right: auto
+    }
+</style>
+
+    <table class="table table">
+            <thead class="thead-light">
+            <tr>
+                <th scope="col">SEND</th>
+                <th scope="col">RECEIVE</th>
+                <th scope="col">CONTENT</th>
+                <th scope="col">SENDTIME</th>
+                <th scope="col">VIEW</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="mag:${responseDTO.dtoList}">
+                <td>[[${mag.send}]]</td>
+                <td>[[${mag.receive}]]</td>
+                <td>[[${mag.content}]]</td>
+                <td>[[${#temporals.format(mag.send_time, 'yyyy/MM/dd')}]]</td>
+                <td><a th:href="|javascript:movePage(${mag.mno})|"><i class="fa fa-check-circle-o fa-2x" aria-hidden="true"></i></a></td>
+            </tr>
+            </tbody>
+    </table>
+</div>
+
+
+
+</div>
+
+<th:block  layout:fragment="script">
+
+    <script th:inline="javascript">
+    const responseDTO = [[${responseDTO}]].dtoList
+
+    console.log(responseDTO)
+
+    const mno = responseDTO[0].mno
+
+    function movePage(mno) {
+
+        let uri = "";
+
+
+            uri = `/messeage/read?mno=${mno}`
+
+            self.location = uri
+
+    }
+    </script>
+
+</th:block>

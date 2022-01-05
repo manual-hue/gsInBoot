@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout1">
+<div layout:fragment="content">
+    <style> #dropdown {display: none;} </style>
+    <div class="page-header" style="background-color: white;">
+        <div class="container">
+            <div class="row">
+                <div class="page-header" style="background-image: url('https://img.rawpixel.com/s3fs-private/rawpixel_images/website_content/p-s75-jir-0417-teddy-01.jpg?w=1200&h=1200&dpr=1&fit=clip&crop=default&fm=jpg&q=75&vib=3&con=3&usm=15&cs=srgb&bg=F4F4F3&ixlib=js-2.2.1&s=587d6a43da966744b8c94f233b5ff99f');">
+                    <div class="filter"></div>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-4 ml-auto mr-auto">
+                                <div class="card card-register" style="margin-bottom: 100px; margin-top: 100px;">
+                                    <h3 class="title mx-auto text-center" style="color: #3c3c3c; margin-bottom: 40px;">결제가 정상처리 되었습니다.</h3>
+                                    <button class="btn btn-default btn-block btn-round" onclick="redirectList()">목록으로 돌아가기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <th:block layout:fragment="script">
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+    <script>
+        function redirectList(){
+            location.href='/fundboard/list';
+        }
+    </script>
+</th:block>

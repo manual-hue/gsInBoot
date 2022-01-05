@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout1">
+
+
+<div layout:fragment="content">
+    <style>
+        .fundingCard .card { margin-bottom: 60px; }
+
+        .menuTitle {
+            margin: 90px 0 30px;
+            color: #b6ac9d;
+            font-family: ui-rounded;
+        }
+
+        .pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > a:active, .pagination > li.active > a, .pagination > li.active > span, .pagination > li.active > a:hover, .pagination > li.active > span:hover, .pagination > li.active > a:focus, .pagination > li.active > span:focus {
+            background-color: #b6ac9d;
+            border-color: #b6ac9d;
+        }
+
+        .page-item.active .page-link {
+            background-color: #dbceba;
+            border-color: #dbceba;
+        }
+
+        .carousel-inner {
+            text-align: -webkit-center;
+        }
+
+        .page-carousel {
+            box-shadow: 0 6px 10px -4px rgb(255 255 255 / 15%);
+        }
+
+        .card.page-carousel:hover {
+            box-shadow: 0 6px 10px -4px rgb(255 255 255 / 15%);
+        }
+
+        .carousel-item {
+            background-color: white;
+            height: 500px;
+        }
+
+        .carousel-caption {
+            bottom: 50px;
+        }
+
+        .carousel-item img {
+            margin: 20px;
+            max-width: 60%;
+            height: auto;
+            overflow: hidden;
+        }
+
+        .textH2 {
+            text-align: right;
+        }
+
+        .tagDiv {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 0rem;
+        }
+
+        .tagDiv .list {
+            font-size: x-small;
+            list-style: none;
+            margin: 1px;
+            margin-top: revert;
+            margin-bottom: revert;
+            background-color: #e1e1e1;
+            color: white;
+            max-width: 70px;
+            padding: 0 7px;
+            border-radius: 7px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .pagination {
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+
+        .pagination .active, .collapsible:hover {
+            background-color: #ffffff;
+        }
+
+        #imgThumb {
+            max-width: 273px;
+            max-height: 160px;
+            overflow: hidden;
+        }
+
+    </style>
+    <div id="wrapper" style="width: 90%; margin: 0 auto;">
+        <!-- Carousel -->
+        <div class="section pt-o" id="carousel">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 ml-auto mr-auto">
+                        <div class="card page-carousel">
+                            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                <ol class="carousel-indicators">
+                                    <li data-target="#carouselExampleIndicators" th:attr="data-slide-to=${0}"
+                                        class="active"></li>
+                                    <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                    <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                </ol>
+                                <div class="carousel-inner carouselDiv" role="listbox">
+                                    <div class="carousel-item active">
+                                        <img class="d-block img-fluid" th:src="@{/assets/img/소품.jpg}"
+                                             alt="First slide">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <p>드랍쉬핑</p>
+                                            <button class="btn btn-outline-neutral"
+                                                    onclick="location.href='http://localhost:8080/saleboard/list';">
+                                                Drop-Shipping
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img class="d-block img-fluid" th:src="@{/assets/img/요청.jpg}"
+                                             alt="Second slide">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <p>드랍쉬핑 요청</p>
+                                            <button class="btn btn-outline-neutral"
+                                                    onclick="location.href='http://localhost:8080/reqboard/list';">
+                                                Request
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="carousel-item">
+                                        <img class="d-block img-fluid" th:src="@{/assets/img/펀딩.jpg}"
+                                             alt="Third slide">
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <p>펀딩</p>
+                                            <button class="btn btn-outline-neutral"
+                                                    onclick="location.href='http://localhost:8080/fundboard/list';">
+                                                Funding
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a class="left carousel-control carousel-control-prev" href="#carouselExampleIndicators"
+                                   role="button" data-slide="prev">
+                                    <span class="fa fa-angle-left"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control carousel-control-next"
+                                   href="#carouselExampleIndicators" role="button" data-slide="next">
+                                    <span class="fa fa-angle-right"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--    검색-->
+        <div class="card-body" style="text-align: center;">
+            <div class="float-end">
+                <select id="searchType">
+                    <option value="" th:selected="${pageRequestDTO.type} == null">Option?</option>
+                    <option value="T" th:selected="${pageRequestDTO.type} =='T'">title</option>
+                    <option value="C" th:selected="${pageRequestDTO.type} =='C'">content</option>
+                    <option value="W" th:selected="${pageRequestDTO.type} =='W'">writer</option>
+                    <option value="H" th:selected="${pageRequestDTO.type} == 'H'">hashtag</option>
+                    <option value="TC" th:selected="${pageRequestDTO.type} == 'TC'">title/content</option>
+                    <option value="TCWH" th:selected="${pageRequestDTO.type} == 'TCWH'">all</option>
+                </select>
+                <input type="text" id="keyword" th:value="${pageRequestDTO.keyword}" onkeyup="enterkey();">
+                <i class="fas fa-search fa-2x" onclick="search()"
+                   style="cursor: pointer; font-size: large; margin-left: 10px;"></i>
+            </div>
+        </div>
+
+        <!-- 카드 -->
+        <p class="h3 menuTitle text-center">G-STREET의 다양한 펀딩!</p>
+        <h6 class="card-subtitle text-muted text-center" id="today" style="margin-bottom: 50px"></h6>
+        <div class="cardDiv fundingCard" style="width: 100%">
+            <div class="card" style="width: 23%" th:each="fundboard:${responseDTO.dtoList}">
+                <a th:href="|javascript:movePage(${responseDTO.page}, ${fundboard.fno})|">
+                    <div id="imgThumb">
+                        <img th:each="image:${fundboard.imageTags[0]}" th:src="@{${image}}">
+                    </div>
+                    <div class="card-body">
+                        <p style="display: none;">[[${fundboard.fcontent}]]</p>
+                        <h6 class="cart-text">[[${fundboard.fno}]]</h6>
+                        <h4 class="card-title">[[${fundboard.ftitle}]]</h4>
+                        <h6 class="card-subtitle mb-2 text-muted">[[${fundboard.fwriter}]]</h6>
+                        <p class="card-text">[[${fundboard.fcount}]]명이 보고 갔어요!</p>
+                        <h6 class="card-subtitle mb-2 text-muted text-right">￦[[${fundboard.fprice}]]</h6>
+                        <input type="hidden" class="fenddate" th:value="${fundboard.fenddate}">
+                        <h6 class="card-subtitle timeDeal mb-2 text-right" style="color: rgba(194,11,11,0.98)"></h6>
+                        <ul class="tagDiv">
+                            <li class="list" th:each="tag:${fundboard.ftags}">[[${tag}]]</li>
+                        </ul>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!--        페이징 -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li th:if="${responseDTO.prev}" class="page-item">
+                    <a class="page-link" th:href="|javascript:movePage(${responseDTO.start-1})|" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+
+                <li th:each="num: ${#numbers.sequence(responseDTO.start , responseDTO.end)}"
+                    th:class="|page-item ${responseDTO.page == num?'active':''}|">
+                    <a class="page-link" th:href="|javascript:movePage(${num})|">[[${num}]]</a>
+                </li>
+
+                <li th:if="${responseDTO.next}" class="page-item">
+                    <a class="page-link" th:href="|javascript:movePage(${responseDTO.end+1})|" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="fundingPro">
+            <a th:href="@{/fundboard/register}"><img th:src="@{/assets/img/지스트리트+.JPG}" width="100%"></a>
+        </div>
+
+        <br><br><br>
+
+    </div>
+    <!-- 전체 div-->
+
+    <th:block layout:fragment="script">
+        <script th:inline="javascript"> // 남은 시간 계산
+            var today = new Date()
+
+            document.querySelector('#today').innerHTML = today + '일 기준';
+
+            function countDownTimer(dt) {
+                var end = new Date(dt);
+                var _second = 1000;
+                var _minute = _second * 60;
+                var _hour = _minute * 60;
+                var _day = _hour * 24;
+                var timer;
+
+                function showRemaining() {
+                    var now = new Date();
+                    var distance = end - now;
+                    if (distance < 0) {
+                        clearInterval(timer);
+                        document.querySelector(".timeDeal").innerHTML = '이미 종료된 펀딩입니다.';
+                        return;
+                    }
+                    var days = Math.floor(distance / _day);
+                    var hours = Math.floor((distance % _day) / _hour);
+                    document.querySelector(".timeDeal").innerHTML = days + '일 ';
+                    document.querySelector(".timeDeal").innerHTML += hours + '시간 남음';
+                }
+                timer = setInterval(showRemaining, 2000);
+            }
+
+            var fenddate = document.querySelector(".fenddate").value
+            var enddate = fenddate.replace('T', ' ')
+            console.log('종료일: '+enddate)
+
+            countDownTimer(enddate);
+        </script>
+
+        <script th:inline="javascript">
+
+            const pageRequest = [[${pageRequestDTO}]]
+
+            function movePage(page, fno) {
+
+                console.log(pageRequest)
+
+                let uri = "";
+
+                const type = pageRequest.type
+                const keyword = pageRequest.keyword
+
+                let searchQuery = ''
+                if (type && keyword) {
+                    searchQuery += `&type=${type}&keyword=${keyword}`
+                }
+
+                if (fno) {
+                    uri = `/fundboard/read?fno=${fno}&page=${page}` + searchQuery
+                } else {
+                    uri = `/fundboard/list?page=${page}` + searchQuery
+                }
+                self.location = uri
+            }
+
+            // Enter 키로도 검색이 실행되게끔 한다.
+            function enterkey() {
+                if (window.event.keyCode == 13) {
+                    search();
+                }
+            }
+
+            function search() {
+                const searchSelect = document.querySelector("#searchType")
+
+                const type = searchSelect.options[searchSelect.selectedIndex].value
+
+                const keyword = encodeURI(document.querySelector("#keyword").value)
+
+                console.log("type", type, "keyword", keyword)
+
+                self.location = `/fundboard/list?page=1&type=${type}&keyword=${keyword}`
+            }
+        </script>
+    </th:block>
+</div>
+

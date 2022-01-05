@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+
+<div layout:fragment="content">
+
+
+        <div class="card-header">
+            Saleboard Modify
+        </div>
+
+        <div class="card-body">
+            <form  id="form1" th:action="@{/saleboard/modify}" method="post">
+
+                <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
+
+
+                <div class="form-check-radio form-check-inline" th:value="${dto.s_option}">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="s_option" id="exampleRadiosInline1" value="progress"checked>
+                        progress
+                        <span class="form-check-sign"></span>
+                    </label>
+                </div>
+
+                <div class="form-check-radio form-check-inline" th:value="${dto.s_option}">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="s_option" id="exampleRadiosInline2" value="End">
+                        End
+                        <span class="form-check-sign"></span>
+                    </label>
+                </div>
+
+
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Sno</span>
+                    <input type="text" name="sno" class="form-control" style="background-color: #e9ecef;" readonly
+                           th:value="${dto.sno}"  >
+                </div>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Title</span>
+                    <input type="text" name="stitle" class="form-control"  style="background-color: transparent;"
+                           th:value="${dto.stitle}"   >
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Writer</span>
+                    <input type="text" name="swriter" class="form-control"  style="background-color: #e9ecef;"
+                           th:value="${dto.swriter}" readonly>
+                </div>
+
+                <div class="input-group mb-3">
+                    <span class="input-group-text">Category</span>
+                    <select class="form-control" name="scategory" required th:value="${dto.scategory}">
+                        <option selected placeholder="Please select a country">---Please select a country---</option>
+                        <option value="Asia">Aisa</option>
+                        <option value="USA">USA</option>
+                        <option value="Europe">Europe</option>
+                        <option value="Oceania">Oceania</option>
+                        <option value="North America">North America</option>
+                        <option value="South America">South America</option>
+                    </select>
+
+                </div>
+
+
+                <div class="input-group">
+                    <span class="input-group-text">Content</span>
+                    <textarea class="form-control"  style="background-color: transparent;" aria-label="With textarea" name="scontent" rows="7"  id = "input6">[[${dto.scontent}]]</textarea>
+                </div>
+
+
+                &nbsp;
+
+                <div class="form-group">
+                    <label>Please register your location ! </label>
+                    <div class="latlng">
+                        <input type="text" name = "lat" class="form-control" id="exampleInputEmail3"  placeholder="Please enter latitude" >
+                        <input type="text" name = "lang" class="form-control" id="exampleInputEmail4"  placeholder="Please enter longitude" >
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <!-- textarea -->
+                        <div class="form-group">
+                            <label>Current location</label>
+                            <div lass="col-sm-12">
+                                <body onload="javascript:locationTest();">
+                                <div id="result" class="supported"></div>
+                                <br/>
+                                <div id="mapCanvas" style="height:400px; border:1px solid #e3e3e3"> </div>
+                                </body>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                &nbsp;
+
+                <div class="tr_hashTag_area">
+                    <div class="form-group">
+
+                    <span th:each="tag:${dto.tags}" style="color: #1d6fa5">
+                            <li class='tag-item nav-item px-4' style='padding: 8px; border-radius: 30px; color:white; background-color : #5fa4cc; display: initial;'>
+                            <b style="color:white">[[|${tag}|]]</b>&nbsp;
+                            <span class='del-btn btn-default pl-2' idx='" + counter + "'style='background-color:transparent; color: white; cursor: pointer;' onclick="javascript:removeDiv(this)">x</span></li>
+
+                    </span>
+
+                    </div>
+                </div>
+
+
+                <div class="input-group">
+                    <span class="input-group-text">#</span>
+                    <span contenteditable="true" type="text"  class="form-control tagInput" ></span>
+                </div>
+
+
+                <style>
+                    .uploadResult {
+                        width: 100%;
+                        background-color: gray;
+                    }
+
+                    .uploadResult ul {
+                        display: flex;
+                        flex-flow: row;
+                        justify-content: center;
+                        align-items: center;
+                    }
+
+                    .uploadResult ul li {
+                        list-style: none;
+                        padding: 10px;
+                    }
+
+                    .uploadResult ul li img {
+                        width: 100px;
+                    }
+                </style>
+
+                <style>
+                    .bigPictureWrapper {
+                        position: absolute;
+                        display: none;
+                        justify-content: center;
+                        align-items: center;
+                        top:0%;
+                        width:100%;
+                        height:100%;
+                        background-color: gray;
+                        z-index: 100;
+                    }
+
+                    .bigPicture {
+                        position: relative;
+                        display:flex;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                </style>
+
+                <div class="col-lg-12 card-body">
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading">File Attach</div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div class="form-group uploadDiv">
+                                <input type="file" name='uploadFile' multiple>
+                            </div>
+
+
+
+                            <div class='uploadResult' style="background-color: white;">
+                                <ul>
+
+                                </ul>
+
+                            </div>
+
+                            <div style="text-align: center">
+
+                                        <span th:each="picture:${dto.pictures}">
+                                            <img th:src="@{/display(fileName=${picture.getLink()})}">
+                                             <button onclick="javascript:removeDiv(this)"  class='btn btn-warning btn-circle btn-sm' type='button'>
+                                            <i class="fas fa-times">
+                                            </i></button>
+                                        </span>
+
+                            </div>
+
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="my-5">
+                        <div class="my-4">
+                            <div class="float-end hiddens" style="float: right;">
+                                <button type="button" class="btn btn-primary" th:onclick="|modify()|">Modify</button>
+                                <button type="button" class="btn btn-secondary" th:onclick="|moveList()|">List</button>
+                                <button type="button" class="btn btn-secondary" th:onclick="|moveDel(${dto.sno})|">Delete</button>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                </div>
+
+
+
+            </form>
+        </div>
+</div>
+
+
+    <th:block  layout:fragment="script">
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+        <script th:inline="javascript">
+
+        const inputFile = document.querySelector("input[name='uploadFile']")
+
+        function modify() {
+
+        const formObj = document.querySelector("#form1")
+
+
+            const liTags = document.querySelectorAll(".uploadResult ul li")
+            let str =""
+
+            for(let i = 0; i < liTags.length; i++){
+
+                var jobj = liTags[i]
+
+                str += "<input type='hidden' name='pictures["+i+"].fileName' value='"+jobj.getAttribute('data-filename')+"'>";
+                str += "<input type='hidden' name='pictures["+i+"].uuid' value='"+jobj.getAttribute('data-uuid')+"'>";
+                str += "<input type='hidden' name='pictures["+i+"].savePath' value='"+jobj.getAttribute("data-path")+"'>";
+                str += "<input type='hidden' name='pictures["+i+"].idx' value='"+ i+"'>";
+
+            }
+
+
+            const targetDiv = document.querySelector(".hiddens")
+
+            targetDiv.innerHTML += str
+
+            const hashTags = document.querySelector(".tagInput").innerHTML.split(",")
+
+            if(hashTags && hashTags.length > 0 && hashTags[0].trim() !== ''){
+                let tagStr =''
+                for(let i = 0; i < hashTags.length; i++){
+                    tagStr += "<input type='hidden' name='tags["+i+"]' value='"+ hashTags[i]+"'>"
+                }
+                targetDiv.innerHTML += tagStr
+            }
+
+
+        formObj.setAttribute("action","/saleboard/modify")
+        formObj.setAttribute("method","post")
+
+        const page = [[${pageRequestDTO.page}]]
+        const size = [[${pageRequestDTO.size}]]
+        const type = [[${pageRequestDTO.type}]]
+        const keyword = [[${pageRequestDTO.keyword}]]
+
+        formObj.submit()
+
+
+        }
+
+
+        function moveList(){
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if(type && keyword){
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location=`/saleboard/list?page=${page}&size=${size}` + searchQuery
+
+        }
+
+        function moveDel(sno) { //삭제
+
+            const formObj = document.querySelector("#form1")
+            formObj.setAttribute("action","/saleboard/remove")
+            formObj.setAttribute("method","post")
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            formObj.submit()
+
+        }
+
+        function removeDiv(ele){
+            ele.parentElement.remove()
+        }
+
+        </script>
+
+
+        <script th:inline="javascript">
+
+            inputFile.addEventListener("change",function(e){
+
+                var formData = new FormData()
+
+                var files = inputFile.files
+
+                for(var i = 0; i < files.length; i++){
+
+                    console.log(files[i])
+
+                    formData.append("uploadFiles", files[i]);
+
+                }
+
+                async function uploadData() {
+
+                    const response = await axios.post('/uploadAjax', formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+
+                    const data = response.data
+
+
+                    showUploadFile(data)
+
+                }
+
+                uploadData()
+
+
+            },false)
+
+
+            const uploadUL = document.querySelector(".uploadResult ul")
+
+            function showUploadFile(arr){
+
+                console.log('————————————————')
+                console.log(arr)
+
+                let str = "";
+
+                for(let i = 0; i < arr.length; i++){
+
+                    const obj = arr[i];
+
+                    var fileCallPath =  encodeURIComponent( obj.savePath+ "/s_"+obj.uuid +"_"+obj.fileName)
+
+                    str +=
+                        `<li data-path=${obj.savePath} data-uuid=${obj.uuid} data-filename=${obj.fileName} ><div>
+                  <span>${obj.fileName}</span>
+                 <button onclick="javascript:removeDiv(this)"  type='button' data-file=${fileCallPath} data-type='image' class='btn btn-warning btn-circle'><i class="fas fa-times"></i></button><br>
+                 <img src='/display?fileName=${fileCallPath}'>
+                 </div>
+                 </li>`
+
+                }
+
+                //console.log(str)
+                uploadUL.innerHTML += str
+
+
+            }
+
+        </script>
+
+
+        <script th:inline="javascript">
+
+            function locationTest() {
+
+                navigator.geolocation.getCurrentPosition(handleLocation, handleError);
+
+            }
+
+            function handleLocation(position)  {
+
+                var outDiv = document.getElementById("result");
+
+                var posStr = "Latitude: " + position.coords.latitude + " / ";
+
+                posStr += "Longitude: " + position.coords.longitude; //경도
+
+                outDiv.innerHTML = posStr;
+
+                var latlng = new google.maps.LatLng(position.coords.latitude,
+
+                    position.coords.longitude);
+
+                var mapOption = {
+
+                    zoom: 15,
+
+                    center: latlng,
+
+                    mapTypeControl: false,
+
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+
+                };
+
+                var map = new google.maps.Map(
+
+                    document.getElementById("mapCanvas"), mapOption);
+
+                new google.maps.Marker({position : latlng, map : map, title : "here!!"});
+
+            }
+
+            function handleError(err) {
+
+                var outDiv = document.getElementById("result");
+
+                if(err.code == 1) {
+                    outDiv.innerHTML = "사용자가 위치정보 공유를 거부함";
+                }
+
+                else {
+                    outDiv.innerHTML = "에러발생 : " + err.code;
+
+                }
+
+            }
+
+
+        </script>
+
+
+    </th:block>

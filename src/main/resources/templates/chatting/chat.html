@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+
+<div layout:fragment="content">
+
+  <style>
+    *{
+      margin:0;
+      padding:0;
+    }
+    .container{
+      width: 500px;
+      margin: 0 auto;
+      padding: 25px
+    }
+    .container h1{
+      text-align: center;
+      color: burlywood;
+      margin-bottom: 20px;
+    }
+    .chating{
+      width: 500px;
+      height: 500px;
+      overflow: auto;
+      background-color: initial;
+    }
+    .chating .me{
+      color: #0b1011;
+      text-align: right;
+      font-size: medium;
+    }
+    .chating .others{
+      color: #0b1011;
+      text-align: right;
+      font-size: medium;
+    }
+    input{
+      width: 258px;
+      height: 34px;
+    }
+    #yourMsg{
+      display: none;
+    }
+
+    #balloon_01{ //me
+    position:relative;
+      margin: 50px;
+      background:pink;
+      border-radius: 10px;
+      position: relative;
+    }
+    #balloon_01:after{
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      width: 0;
+      height: 0;
+      border: 14px solid transparent;
+      border-left-color: pink;
+      border-right: 0;
+      border-top: 0;
+      margin-top: -7px;
+      margin-right: -14px;
+    }
+    #balloon_03{ //other
+    position:relative;
+      margin: 50px;
+      background: #b6b4b4;
+      border-radius: 10px;
+      position: relative;
+    }
+    #balloon_03:after{
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      width: 0;
+      height: 0;
+      border: 24px solid transparent;
+      border-right-color: #b6b4b4;
+      border-left: 0;
+      border-top: 0;
+      margin-top: -7px;
+      margin-left: -14px;
+    }
+
+
+
+    #chating img {
+
+      width: 60px;
+      float: right;
+      display: unset;
+      top: -40px;
+      left: 70px;
+      position: relative;
+    }
+
+    #balloon_03 img {
+      width: 60px;
+      float: left;
+      display: unset;
+      top: -40px;
+      left: -70px;
+      position: relative;
+    }
+
+
+
+
+
+  </style>
+
+
+
+  <div class="card-header">
+
+    ※ 실시간 랜덤 채팅 시 주의사항</br>
+    우리 서비스는 친구를 추가하지 않아도 링크를 통해서 이야기를 나누며 공감하는 서비스입니다.</br>
+    회원들의 쾌적하고 안전한 활동을 보호하기 위하여 정책상 이용 제한 사유를 규정하고 있습니다.</br>
+    대화방의 개설 및 대화 활동 중 약관 및 운영정책을 위반하는 활동이 신고 등을 통하여 확인되는 경우,</br>
+    이를 위반한 이용자의 채팅방 활동을 한시적 또는 영구적으로 제한하고 있습니다.</br>
+    </br>
+    ◼ 채팅방 개설 후 이용제한이 적용되는 행동은 아래와 같습니다.</br>
+    - 청소년 유해활동</br>
+    - 원치 않는 상대방에게 홍보하는 행위</br>
+    - 같은 메시지를 연속으로 보내는 도배 행위</br>
+    - 욕설 및 타인에게 불편함을 줄 수 있는 비방적 메시지 발송</br>
+    - 다른 사용자의 서비스 이용에 불편함을 주는 기타 행위 등</br>
+    </br>
+    그럼 함께 더불어 나아가는 채팅서비스 온전하게 이용부탁드립니다 감사합니다.</br>
+    </br>
+
+    ※ Precautions for Real-Time Random Chat </br>
+    Our service is a service where you can communicate and sympathize with each other through links without adding friends. </br>
+    In order to protect your comfortable and safe activities, we provide reasons for policy restrictions. </br>
+    In the event that activities that violate the terms and conditions and operating policies are identified in the opening of a chat room and conversation activities, </br>
+    We have temporarily or permanently restricted chat room activities for users who violate this rule. </br>
+    </br>
+    ◼ After opening the chat room, restrictions on use will be applied as follows. </br>
+    - Adolescent Harmful Activities </br>
+    - Publicizing unwanted people </br>
+    - The act of sending the same message in succession </br>
+    - Send slanderous messages to curse and offend others. </br>
+    - Other actions that may cause discomfort to other users' use of the service, etc. </br>
+    </br>
+    Then, please use the chat service that goes well with you. Thank you very much. </br>
+  </div>
+
+  <div class="card-body">
+    <div id="container" class="container">
+      <h1>[[${roomName}]]</h1>
+
+
+
+      <input type="hidden" id="sessionId" value="">
+      <input type="hidden" id="roomNumber" th:value="${roomNumber}">
+
+
+      <div id="chating" class="chating">
+
+      </div>
+
+      <div id="yourName">
+        <table class="inputTable">
+          <tr>
+            <th style="padding: 10px;">NAME&nbsp;</th>
+
+            <th><input type="text" name="userName" id="userName" style="width: 360px;"></th>
+            <th><button class="btn btn-dark btn-round btn-sm" onclick="chatName()" id="startBtn">UP</button></th>
+          </tr>
+        </table>
+      </div>
+      <div id="yourMsg">
+        <table class="inputTable">
+          <tr>
+            <th style="padding: 10px;">MESSAGE&nbsp;</th>
+            <th><input  style="width: 300px;margin-top: 20px;" id="chatting" placeholder="type a message">&nbsp;</th>
+            <th><button class="btn btn-dark btn-round btn-sm" onclick="send()" id="sendBtn">SEND</button></th>
+            <th>
+              <a href="/saleboard/list"><button class="btn btn-warning btn-round btn-sm" style="float: right">EXIT</button></a>
+            </th>
+
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<th:block  layout:fragment="script">
+
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+  <script th:inline="javascript">
+
+    var ws;
+
+    function wsOpen(){
+      ws = new WebSocket("ws://" + location.host + "/chatting/"+$("#roomNumber").val());
+      wsEvt();
+    }
+
+    function wsEvt() {
+      ws.onopen = function(data){
+
+      }
+
+      ws.onmessage = function(data) {
+        var msg = data.data;
+        if(msg != null && msg.trim() != ''){
+          var d = JSON.parse(msg);
+          if(d.type == "getId"){
+            var si = d.sessionId != null ? d.sessionId : "";
+            if(si != ''){
+              $("#sessionId").val(si);
+            }
+          }else if(d.type == "message"){
+            if(d.sessionId == $("#sessionId").val()){
+              $("#chating").append("<span class='me' id='balloon_01'style='width: 200px;float: right; text-align: left;'><div>Me :</div>" + d.msg + " <img src=\"http://ssl.gstatic.com/accounts/ui/avatar_2x.png\" class=\"avatar img-circle img-thumbnail\" alt=\"avatar\"></span>");
+            }else{
+              $("#chating").append("<span class='others' id='balloon_03' style='width: 200px;float: left;text-align: left;'>"+"<div>" + d.userName + " :"  +"<div>" + d.msg + " <img src=\"http://ssl.gstatic.com/accounts/ui/avatar_2x.png\" class=\"avatar img-circle img-thumbnail\" alt=\"avatar\"></span>");
+            }
+
+          }else{
+            console.warn("unknown type!")
+          }
+        }
+      }
+
+      document.addEventListener("keypress", function(e){
+        if(e.keyCode == 13){
+          send();
+        }
+      });
+    }
+
+    function chatName(){
+      var userName = $("#userName").val();
+      if(userName == null || userName.trim() == ""){
+        alert("사용자 이름을 입력해주세요.");
+        $("#userName").focus();
+      }else{
+        wsOpen();
+        $("#yourName").hide();
+        $("#yourMsg").show();
+      }
+    }
+
+    function send() {
+      var option ={
+        type: "message",
+        roomNumber: $("#roomNumber").val(),
+        sessionId : $("#sessionId").val(),
+        userName : $("#userName").val(),
+        msg : $("#chatting").val()
+      }
+      ws.send(JSON.stringify(option))
+      $('#chatting').val("");
+    }
+
+
+
+  </script>
+</th:block>

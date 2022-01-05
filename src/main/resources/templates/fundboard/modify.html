@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorator="layout/layout1">
+
+<div layout:fragment="content">
+    <style>
+        .form-group img { width: 650px; order: 1; }
+        .right-content { order: 2; margin-left: 20px; }
+        .goal-section { display: flex; flex-direction: row; }
+        .fund-info { height: 400px;}
+        .fund-info .right-content { height: 400px; }
+        .main-title .form-control {
+            text-align: center;
+            border: 1px solid #ffffff;
+            background-color: transparent; }
+        a{ color: white; }
+        .note-editable {min-height: 700px;}
+    </style>
+
+    <div id="wrapper" style="width: 80%; margin: 0 auto; margin-bottom: 60px; margin-top: 60px" >
+        <form id="modifyForm" th:action="@{/fundboard/modify}" method="post">
+            <div class="form-group main-title">
+                <input type="hidden" th:value="${dto.fno}" name="fno">
+                <input type="text" id="fregdate" th:value="${#temporals.format(dto.fregdate, 'yyyy/MM/dd HH:mm:ss')}" class="form-control" disabled>
+                <input type="text" th:value="${dto.ftitle}" name="ftitle" style="height: 80px; font-size: xx-large; font-weight: bold;" class="form-control" id="inputPassword4" >
+                <input type="text" th:value="${dto.fwriter}" name="fwriter" class="form-control" id="inputAddress" >
+            </div>
+
+            <div class="form-row" style="display: inline-flex; flex-direction:row; flex-wrap: wrap; margin-top: inherit;">
+                    <div class="form-group col-md-8" style="order:1;">
+                        <label for="summernote">프로젝트 계획</label>
+                        <textarea id="summernote" name="fcontent" style="overflow: auto;" th:utext="${dto.fcontent}"></textarea>
+                    </div>
+                <div class="right-content2 col-md-3" style="order:2; margin-left: 66px; margin-top: 40px;">
+                    <div class="form-group">
+                        <label for="inputCity">hashtag</label>
+                        <div class="li" id="inputCity" style="color: #7cafcd; width:200px; font-weight: bold;" th:each="tag:${dto.ftags}">#[[${tag}]]</div>
+                        <label style="margin-top: 20px">product</label>
+                        <input type="text" class="form-control" name="fproduct" style="width: 200px; height: fit-content;" th:value="${dto.fproduct}">
+                        <label for="fprice" style="margin-top: 20px">price</label>
+                        <input type="text" class="form-control" name="fprice" id="fprice" style="width: 200px; height: fit-content;" th:value="${dto.fprice}">
+                    </div>
+                </div>
+            </div>
+
+        <div class="float-end hiddens">
+            <button type="submit" style="float:right; display: inline-block;" class="btn btn-primary">submit!</button>
+            <button type="button" style="float:right; display: inline-block;" class="btn btn-primary"><a th:href="@{/fundboard/list}">back?</a></button>
+        </div>
+        </form>
+    </div>
+
+<th:block layout:fragment="script">
+    <script th:inline="javascript"> // 썸네일용 content 내 img 태그 추출
+    var content = [[${dto.fcontent}]] // 컨텐츠 추출, 백틱으로 문자열 그대로 추출
+
+    const tempArr = [[${dto.imageTags}]]
+
+    console.log(tempArr) //content 내의 모든 img src 태그 배열로써 추출
+    console.log(tempArr[0]) //첫번째 이미지
+
+    str = ''
+    if(tempArr.length > 0){
+        str += "<div>"
+        str += `<img style="width: 650px; height: 400px;" src=`
+        str += tempArr[0]
+        str += `">`
+        str += "</div>"
+    }
+
+    document.querySelector("#imgThumb").innerHTML = str
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</th:block>

@@ -1,0 +1,439 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorator="layout/layout2">
+
+<div layout:fragment="content">
+    <div class="card-header text-center">
+        <h5 style="color: #0b2e13; font-weight: bolder;">Request Board</h5>
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-3">
+            <!--/*@thymesVar id="dto" type=""*/-->
+            <input type="text" name="bno" class="form-control" hidden
+                   th:value="${dto.bno}">
+        </div>
+        <div class="categories" style="display: flex">
+            <div class="input-group mb-3">
+                <span class="card-header">Category</span>
+                <input type="text" name="r_category" class="form-control" style="background-color: white; width: 40%" readonly
+                       th:value="${dto.r_category}">
+            </div>
+            <span class="card-header">Date</span>
+            <input type="text" name="date" class="form-control text-center" th:value="${#temporals.format(dto.r_regDate, 'yyyy-MM-dd')}" style="background-color: white; width: 40%" readonly>
+            <span class="card-header">Views</span>
+            <input type="text" name="views" class="form-control text-center" th:value="${dto.views}"
+                   style="background-color: white; width: 20%" readonly>
+        </div>
+        <div class="input-group mb-3">
+            <span class="card-header">Title</span>
+            <input type="text" name="r_title" class="form-control" th:value="${dto.r_title}"
+                   style="background-color: white;" readonly>
+        </div>
+        <div class="input-group mb-3">
+            <span class="card-header">Writer</span>
+            <input type="text" name="r_writer" class="form-control" th:value="${dto.r_writer}"
+                   style="background-color: white;" readonly>
+        </div>
+        <br>
+        <div>
+            <div class="input-group">
+                <textarea class="card-body text-center" aria-label="With textarea" name="content" rows="10" readonly>[[${dto.r_content}]]</textarea>
+            </div>
+            <div class="photoDiv">
+                <img th:each="photo:${dto.photos}" th:src="@{/display2(fileName=${photo.getLink()}) }">
+            </div>
+        </div>
+        <td class="input-group">
+            <ul class="tagDiv">
+                <li th:each="tag:${dto.tags}"><i class="fas fa-hashtag"></i>[[|${tag}|]]</li>
+            </ul>
+        </td>
+        <div class="my-4">
+            <div class="text-center hiddens">
+                <button type="submit" class="btn btn-primary" style="padding: 4px 10px; background-color: #28a745; border-color: #28a745"
+                        th:onclick="|modify(${dto.bno})|"><i class="fas fa-cog"></i>
+                </button>
+                <button type="cancel" id="btn2" class="btn btn-secondary" style="padding: 4px 10px"
+                        th:onclick="|moveList()|"><i class="far fa-list-alt fa-3x"></i>
+                </button>
+            </div>
+        </div>
+        </form>
+
+        <div class="card-body">
+        <div class="card-header text-lg-left" style="font-weight: bold"><i class="fas fa-comments" style="font-size: xx-large; color: #062c33"></i></div>
+            <ul class="list-group replyUL">
+
+            </ul>
+            <div class="d-flex justify-content-center">
+                <ul class="pagination pagination-warning" style="background-color: transparent">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">2<span class="sr-only"></span></a>
+                    </li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="input-group mb-3">
+                <span class="card-header">Replier</span>
+                <input id="replier" type="text" name="replier" class="form-control">
+            </div>
+            <div class="input-group mb-3" style="display: flex; text-align: left">
+                <span class="card-header">Comment</span>
+                <input id="replyTxt" type="text" name="replyText" class="form-control">
+                <div class="text-md-right">
+                    <i class="far fa-paper-plane" style="font-size: xx-large; color: #062c33; cursor: pointer" onclick="registerReply()"></i>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- reply card-->
+    </div>
+    <style>
+        .uploadResult {
+            width: 100%;
+        }
+
+        .uploadResult ul {
+            display: flex;
+            flex-flow: row;
+            justify-content: left;
+            align-items: center;
+        }
+
+        .uploadResult ul li {
+            list-style: none;
+            padding: 10px;
+        }
+
+        .uploadResult ul li img {
+            width: 100px;
+        }
+
+        .card img {
+            border-radius: 12px 12px 12px 12px;
+        }
+
+        #btn1, #btn2 {
+            padding: unset;
+        }
+
+        .photoDiv {
+            overflow: auto;
+            text-align: center;
+
+        }
+
+        .photoDiv img {
+            max-width: 20%;
+            width: 50%;
+            margin: 10px;
+            border-radius: 5%;
+        }
+
+        .active {
+            background-color: white;
+            text-align: center;
+        }
+
+        .tagDiv {
+            list-style: none;
+            display: flex;
+
+        }
+
+        .tagDiv li {
+            margin: 0.3em;
+            background-color: #dde0e3;
+            border-radius: 0.2em;
+        }
+
+        .btn-sm {
+            padding: 2px 6px;
+        }
+
+        #replier {
+            max-width: fit-content;
+        }
+
+        #replyTxt {
+            max-width: 75%;
+        }
+
+    </style>
+
+    <style>
+        .bigPictureWrapper {
+            position: absolute;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            top: 0%;
+            width: 100%;
+            height: 100%;
+            background-color: gray;
+            z-index: 100;
+        }
+
+        .bigPicture {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+    <style>
+        input[type="text"],
+        span[type="text"],
+        select.form-control {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid lightgray;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+            border-radius: 0;
+        }
+
+        .card-header {
+            background-color: transparent;
+            border: transparent;
+        }
+
+        .card-body i {
+            font-size: medium;
+        }
+
+        .categories {
+            display: flex;
+            flex-direction: row;
+            justify-content: left;
+            font-size: 1.0rem;
+            color: #5E5E5C;
+        }
+
+        .card-body {
+            border: transparent;
+        }
+
+        body{
+            font-family: D2Coding;
+        }
+    </style>
+
+
+</div>
+
+<th:block layout:fragment="script">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script th:inline="javascript">
+
+        function modify(bno) {
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if (type && keyword) {
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location = `/reqboard/modify?bno=${bno}&page=${page}&size=${size}` + searchQuery
+
+        }
+
+        function moveList() {
+
+            const page = [[${pageRequestDTO.page}]]
+            const size = [[${pageRequestDTO.size}]]
+            const type = [[${pageRequestDTO.type}]]
+            const keyword = [[${pageRequestDTO.keyword}]]
+
+            let searchQuery = ''
+
+            if (type && keyword) {
+                searchQuery += `&type=${type}&keyword=${keyword}`
+            }
+
+            self.location = `/reqboard/list?page=${page}&size=${size}` + searchQuery
+
+        }
+
+        const bno = [[${dto.bno}]]
+        let replyPage = 1
+        let replySize = 10
+
+
+        function makeListAndPaging(replyPageResponse) {
+            const dtoList = replyPageResponse.dtoList
+
+            replyPage = replyPageResponse.page
+            size = replyPageResponse.size
+
+            console.log(dtoList)
+
+            let str = ""
+
+            for (const reply of dtoList) {
+                console.log(reply)
+                str += "<li class='list-group-item d-flex justify-content-between align-items-center' style='border: transparent'>"
+                str += `<div class="replyBox" data-rno="${reply.rno}"><span style="font-weight: bold">${reply.replier}</span> > <span class="rtext" style="font-weight: normal">${reply.replyText}</span>
+&nbsp;<button class="btn btn-sm btn-warning" onclick="modifyReply(this)"><i class="fas fa-cog"></i></button>
+</div>`
+                str += "</li>"
+
+            }
+            //console.log(str)
+            document.querySelector(".replyUL").innerHTML = str
+
+            //paging
+            const pagination = document.querySelector(".pagination")
+            let pageStr = ""
+
+            //prev
+            if (replyPageResponse.prev) {
+                pageStr += `<li class="page-item"><a class="page-link"  href="javascript:getList(${replyPageResponse.start - 1})" tabindex="-1">Previous</a></li>`
+            }
+            //num
+            for (let i = replyPageResponse.start; i <= replyPageResponse.end; i++) {
+                pageStr += `<li class="page-item ${i == replyPageResponse.page ? "active" : ""} "><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
+            }
+
+            //next
+            if (replyPageResponse.next) {
+                pageStr += `<li class="page-item"><a class="page-link" href="javascript:getList(${replyPageResponse.end + 1})" tabindex="-1">Next</a></li>`
+            }
+
+            pagination.innerHTML = pageStr
+        }
+
+        async function getList(pageNum) {
+
+            const response = await axios.get(`/replies2/list/${bno}?page=${pageNum}`)
+            const replyPageResponse = await response.data
+
+            console.log(replyPageResponse)
+
+            makeListAndPaging(replyPageResponse)
+
+
+        }
+
+        function registerReply() {
+
+            const replyObj = {
+                bno: bno,
+                replier: document.querySelector("input[name='replier']").value,
+                replyText: document.querySelector("input[name='replyText']").value,
+            }
+
+            async function registerAjax() {
+                const response = await axios.post("/replies2", replyObj)
+                const replyPageResponse = await response.data
+                makeListAndPaging(replyPageResponse)
+                document.querySelector("input[name='replier']").value = ""
+                document.querySelector("input[name='replyText']").value = ""
+            }
+
+            registerAjax();
+
+        }
+
+        let cloneReply = null
+        let targetLi = null;
+
+        function modifyReply(ele) {
+
+            const targetDiv = ele.closest(".replyBox")
+            const currentTargetLi = ele.closest("li")
+
+            if (targetLi === null) {
+                targetLi = currentTargetLi
+            } else if (targetLi !== currentTargetLi) {
+                //alert("기존의 댓글 수정 강제 취소")
+
+                targetLi.querySelector("div").remove()
+                targetLi.appendChild(cloneReply)
+
+                targetLi = currentTargetLi
+            }
+
+            cloneReply = targetDiv.cloneNode(true)
+
+
+            const replyText = targetDiv.querySelector(".rtext").innerHTML
+            const rno = targetDiv.getAttribute("data-rno")
+            //댓글의 번호와 댓글 원본 내용
+            //console.log(rno, replyText)
+
+            const modifyForm = `<div><input type="text" class="editText" value="${replyText}">
+<button class="btn btn-sm btn-info" onclick="modifyReplySend(this)"><i class="fas fa-check fa-2x"></i></button>
+<button class="btn btn-sm btn-danger" onclick="deleteReply()"><i class="far fa-trash-alt fa-2x"></i></button>
+<button class="btn btn-sm btn-info" onclick="cancelModifyReply(this)"><i class="fas fa-undo fa-2x"></i></button> </div>`
+
+            targetLi.innerHTML = modifyForm
+
+        }
+
+        function cancelModifyReply(ele) {
+
+            ele.closest("div").remove()
+
+            //targetLi의 안쪽 elemement 삭제
+            targetLi.appendChild(cloneReply)
+
+        }
+
+        function deleteReply() {
+            const rno = cloneReply.getAttribute("data-rno")
+
+            async function sendDeleteReply() {
+                const response = await axios.delete(`/replies2/${bno}/${rno}?page=${replyPage}&size=${replySize}`)
+                const replyPageResponse = await response.data
+
+                alert("댓글이 삭제되었습니다.")
+                console.log(replyPageResponse)
+
+                makeListAndPaging(replyPageResponse)
+            }
+
+            sendDeleteReply()
+        }
+
+        function modifyReplySend(ele) {
+            const rno = cloneReply.getAttribute("data-rno")
+            const replyText = document.querySelector(".editText").value
+
+            //{rno:rno, replyText:replyText}
+            const replyObj = {rno, replyText, bno}
+
+            async function updateReply() {
+
+                const response = await axios.put(`/replies2/${bno}/${rno}?page=${replyPage}&size=${replySize}`, replyObj)
+                const replyPageResponse = await response.data
+
+                alert("댓글이 수정되었습니다.")
+                console.log(replyPageResponse)
+
+                makeListAndPaging(replyPageResponse)
+            }
+
+            updateReply()
+
+        }
+
+
+        getList(-1)
+
+    </script>
+</th:block>

@@ -1,0 +1,155 @@
+/* The side navigation menu */
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #000000; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+
+/* The navigation menu links */
+.sidenav a {
+    padding: 8px 8px 8px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #ffffff;
+    display: block;
+    transition: 0.3s;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+    color: #f1f1f1;
+}
+
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+    transition: margin-left .5s;
+    padding: 20px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+/* 서랍 사이드바 */
+/* Style the navbar */
+#navbar {
+    overflow: hidden;
+    background-color: #333;
+    float: right;
+    position: sticky;
+}
+
+/* Navbar links */
+#navbar a {
+    float: right;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+}
+
+/* Page content */
+.content {
+    padding: 16px;
+}
+
+/* The sticky class is added to the navbar with JS when it reaches its scroll position */
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the navigation bar gets a new position at the top of the page (position:fixed and top:0) */
+.sticky + .content {
+    padding-top: 60px;
+}
+
+/* 카드 여백 */
+.card {margin: 10px;}
+
+/* 카드 삽입 이미지 */
+.card-img-top{ height: 30px; }
+
+/* 서랍 QNA*/
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+    background-color: #ffffff;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    border-top: 1px solid rgb(240, 240, 240);
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+    background-color: #f4fafb;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.contentQNA {
+    padding: 0 18px;
+    display: none;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.contentQNA p {
+    font-size: smaller;
+    margin: 20px;
+}
+
+.modal-content h4{
+    margin: 25px;
+    font-weight: bold;
+}
+
+/* 펀딩 프로모션 */
+#fundingPro {
+    width: 80%;
+    background-color: #e3dcdc;
+    /*background-image: url('https://p.kindpng.com/picc/s/187-1876141_confetti-png-image-transparent-background-confetti-vector-png.png');*/
+    background-size: auto;
+    justify-content: center;
+    display: table-cell;
+}
+
+#fundingPro h1 h7{
+    margin: auto;
+}
+
+/* 메인 차트 */
+#mainChart {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 80px;
+    justify-content: center;
+}
+
+.card-body i{
+    font-size: xxx-large;
+}

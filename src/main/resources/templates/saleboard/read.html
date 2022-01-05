@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+
+
+<div  layout:fragment="content">
+
+    <style>
+        .o1 {
+            border:none;border-right:0px; border-top:0px; boder-left:0px; boder-bottom:0px;
+            padding: 5px;
+            height: min-content;
+        }
+        .reSp {
+            list-style: none;
+            display: inline;
+            flex-direction: row;
+            margin:0.5em;
+            border-radius: 0.5em;
+            background-color: #1cb386;
+        }
+    </style>
+
+    <div class="card-header">
+        Drop-shopping Sales Posts View
+    </div>
+    <div class="card-body">
+        <div class="input-group mb-3">
+            <i class="far fa-check-circle" style="font-size: x-large"></i>
+            <input type="text" name="s_option" class="form-control o1" style="background-color: transparent;" readonly
+                   th:value="${dto.s_option}"  >
+        </div>
+
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">Sno</span>
+            <input type="text" name="sno" class="form-control" style="background-color: transparent;" readonly
+                   th:value="${dto.sno}"  >
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Title</span>
+            <input type="text" name="stitle" class="form-control"  style="background-color: transparent;" readonly
+                   th:value="${dto.stitle}"   >
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">Writer</span>
+            <input type="text" name="swriter" class="form-control"  style="background-color: transparent;"  readonly
+                   th:value="${dto.swriter}">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">Category</span>
+            <input type="text" name="swriter" class="form-control"  style="background-color: transparent;"  readonly
+                   th:value="${dto.scategory}">
+        </div>
+
+        <div class="input-group mb-3">
+            <span class="input-group-text">RegDate</span>
+            <input type="text" name="sregDate" class="form-control" readonly style="background-color: transparent;"
+                   th:value="${#temporals.format(dto.smod_date, 'yyyy/MM/dd HH:mm:ss')}" >
+        </div>
+
+
+        <div class="input-group">
+            <span class="input-group-text">Content</span>
+            <textarea class="form-control"  style="background-color: transparent;" aria-label="With textarea" name="scontent" rows="7"  id = "input6" disabled>[[${dto.scontent}]]</textarea>
+        </div>
+
+
+        &nbsp;
+
+        <div id="map" style="height:400px; border:1px solid #e3e3e3"></div>
+
+
+        &nbsp;
+
+
+        <div class="form-group" style="text-align: center;">
+            <img th:each="picture:${dto.pictures}" th:src="@{/display(fileName=${picture.getLinkFile()})}"> <!--실제파일크기로-->
+        </div>
+
+        <div class="tr_hashTag_area">
+            <div class="form-group" style="text-align: center;">
+                    <span th:each="tag:${dto.tags}" style="color: #1d6fa5">
+                         <a th:href="@{/saleboard/list(page=1,type=H,keyword=${tag})}">
+                             <b style="color: #1d6fa5">[[|#${tag}|]]</b>&nbsp;</a></span>
+
+            </div>
+        </div>
+
+
+
+        <div class="my-4">
+            <div class="my-4">
+                <div class="float-end" style="float: right;">
+                    <button type="button" class="btn btn-primary" th:onclick="|modify(${dto.sno})|">Modify</button>
+                    <button type="button" class="btn btn-secondary" th:onclick="|moveList()|">List</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <style>
+
+        .deleteModal{
+            font-size: x-large;
+            text-transform: uppercase;
+            margin: inherit;
+            text-align: center;
+            font-family: fantasy;
+
+        }
+        .modifyModal{
+            font-size: x-large;
+            text-transform: uppercase;
+            margin: inherit;
+            text-align: center;
+            font-family: fantasy;
+
+        }
+    </style>
+
+    <div class="modal fade bd-example-modal-sm deleteModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                Comment deletion is complete.
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-sm modifyModal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                Corrected is complete.
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade remodal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:10px">
+                    <h4 class="modal-title">Replies</h4>
+                </div>
+                <div class="modal-body" style="text-align: center; display: contents;">
+
+                    <input type="hidden" name="rno">
+                    <input type="hidden" class = data-group_id="${reply.group_id}">
+                    <input type="hidden" name="replyer" id="replyer" placeholder="Replyer" th:value="${#authentication.getPrincipal().mid}">
+                    Content : <input type="text" name="reply_text" id="reply_text" placeholder="Comment....">
+                </div>
+                <div class="modal-footer float-end" style="float: right;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">close</button>
+                    <button type="button" class="btn btn-primary operBtns2">register</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    <div class="direct-chat direct-chat-primary" style="font-weight: initial;">
+
+        <div class="card-header"  style="background-color: white">
+
+            <i class="far fa-comments" aria-hidden="true" style="font-size: xx-large;"><h8 class="card-title"></h8></i>
+
+        </div>
+        <style>
+            .direct-chat-msg {
+                margin:5px 0 0 20px;
+            }
+            .direct-chat-msg2 {
+                margin:10px 0 0 100px;
+            }
+
+            .ReplyStyleMg {
+                margin:21.5px;
+            }
+
+        </style>
+        <div class="card-body" style="font-family: auto;">
+            <div class="direct-chat-messages">
+            </div>
+            <div class="direct-chat-messages2">
+            </div>
+        </div>
+
+        <style>
+
+            .card-footer {
+                padding: 0.75rem 1.25rem;
+                background-color:white;
+                border-top:white;
+            }
+
+        </style>
+        <div class="card-footer">
+            <div class ="addReplyBtn">
+
+                <form>
+                    <div class="input-group" style="text-align: right; display: flex; flex-direction: row">
+                        <input type="hidden"   name="group_id" >
+                        <input type="hidden"  name="replyer" class="form-control"   th:value="${#authentication.getPrincipal().mid}"/>
+                        &nbsp;
+                        <input type="text"  name="reply_text" class="form-control" placeholder=" Comment....." style="width: 80%;">
+
+                        <button type="button" class="btn btn-default operBtns">ADD</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <style>
+            .pagination>li>a, .pagination>li>span, .pagination>li:first-child>a, .pagination>li:first-child>span, .pagination>li:last-child>a, .pagination>li:last-child>span {
+                border: 2px solid azure;
+                color: inherit;
+
+            }
+            .page-item.active .page-link {
+                background-color: #66615B;
+                color: white;
+                border-color: #66615B;
+            }
+        </style>
+
+        <div class="d-flex justify-content-center"></div>
+
+        <ui class="pagination justify-content-center">
+
+        </ui>
+    </div>
+
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBorZElt0dAArWvqO2v0Q_FEfFn9LZ-ygA&callback=initMap" async defer></script>
+<th:block  layout:fragment="script">
+
+    <script th:inline="javascript"> //지도API
+
+    function initMap() {
+
+        var curLatLng = {
+            lat: [[${dto.lat}]],
+            lng: [[${dto.lang}]]
+        };
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: curLatLng,
+            scrollwheel: false,
+            zoom: 15
+        });
+
+        var marker = new google.maps.Marker({
+            position: curLatLng,
+            map: map,
+            title: 'Hello World!'
+        });
+    }
+
+
+
+    function modify(sno){
+
+        const page = [[${pageRequestDTO.page}]]
+        const size = [[${pageRequestDTO.size}]]
+        const type = [[${pageRequestDTO.type}]]
+        const keyword = [[${pageRequestDTO.keyword}]]
+
+        let searchQuery = ''
+
+        if(type && keyword){
+            searchQuery += `&type=${type}&keyword=${keyword}`
+        }
+
+        self.location=`/saleboard/modify?sno=${sno}&page=${page}&size=${size}`+searchQuery
+
+    }
+
+    function moveList(){
+
+        const page = [[${pageRequestDTO.page}]]
+        const size = [[${pageRequestDTO.size}]]
+        const type = [[${pageRequestDTO.type}]]
+        const keyword = [[${pageRequestDTO.keyword}]]
+
+        let searchQuery = ''
+
+        if(type && keyword){
+            searchQuery += `&type=${type}&keyword=${keyword}`
+        }
+
+        self.location=`/saleboard/list?page=${page}&size=${size}` + searchQuery
+
+    }
+
+
+
+    </script>
+
+
+
+    <script th:inline="javascript">
+
+    const reModalDiv = $(".remodal")
+
+    const deleteModal = $(".deleteModal")
+
+    const modifyModal = $(".modifyModal")
+
+    const sno = [[${dto.sno}]]
+    let replyPage = 1
+    let replySize = 10
+
+    async function getList(pageNum) {
+
+        const response = await axios.get(`/replies/list/${sno}?page=${pageNum}`)
+        const replyPageResponse = await response.data
+
+        console.log(replyPageResponse)
+
+        makeListAndPaging(replyPageResponse);
+
+
+    }
+
+    function makeListAndPaging(replyPageResponse) {
+
+        const swriter = [[${dto.swriter}]]
+        console.log(swriter);
+
+
+        const dtoList = replyPageResponse.dtoList
+        replyPage = replyPageResponse.page
+        replysize = replyPageResponse.size
+
+        console.log(dtoList)
+
+
+        let str = ""
+
+
+        for (const reply of dtoList) {
+
+            if (reply.group_id == null) {
+                str += `<div class="direct-chat-msg">
+                <div class="direct-chat-infos clearfix">
+                    <span class="direct-chat-name float-left"><b>${reply.replyer} • </b>
+                    <span> ${reply.reply_date}</span></span></div>
+<span class="direct-chat-name float-right" onclick="btnClick(${reply.rno})" style="margin-right: 8px">
+                   <strong class = ReplyStyleMg>댓글쓰기</strong></span>
+                <div class="direct-chat-text replyBox" data-group_id="${reply.group_id}" data-rno="${reply.rno}" data-replyer="${reply.replyer}"><span class="rtext">${reply.reply_text}</span>
+<i class="fa fa-trash" aria-hidden="true" onclick="deleteReply(this)" style="font-size: large;float: right; display: inline;"></i>
+<i class="fa fa-pencil-square-o" aria-hidden="true"  onclick="modifyReply(this)" style="font-size: large; float: right; display: table;"></i></div>
+            </div>`
+
+
+            }else if(swriter == reply.replyer) {
+                str += `<div class="direct-chat-msg2">
+
+                <div class="direct-chat-infos clearfix">
+                    <span class="direct-chat-name float-left">${reply.replyer} <span class="reSp"><strong> 작성자</strong></span>•
+                    <span> ${reply.reply_date}</span></span></div>
+                     <span class="direct-chat-name float-right" onclick="btnClick(${reply.rno})" style="margin-right: 8px">
+                   <strong class = ReplyStyleMg>댓글쓰기</strong></span>
+                <div class="direct-chat-text replyBox" data-group_id="${reply.group_id}" data-rno="${reply.rno}" data-replyer="${reply.replyer}"><span class="rtext">${reply.reply_text}</span>
+<i class="fa fa-trash" aria-hidden="true" onclick="deleteReply(this)"  style="font-size: large;float: right; display: inline;"></i>
+<i class="fa fa-pencil-square-o" aria-hidden="true"  onclick="modifyReply(this)" style="font-size: large; float: right; display: table;"></i></div>
+            </div>`
+            }else {
+                str += `<div class="direct-chat-msg2">
+
+                <div class="direct-chat-infos clearfix">
+                    <span class="direct-chat-name float-left"><b>${reply.replyer} • </b>
+                    <span> ${reply.reply_date}</span></span></div>
+                     <span class="direct-chat-name float-right" onclick="btnClick(${reply.rno})" style="margin-right: 8px">
+                   <strong class = ReplyStyleMg>댓글쓰기</strong></span>
+                <div class="direct-chat-text replyBox" data-group_id="${reply.group_id}" data-rno="${reply.rno}" data-replyer="${reply.replyer}"><span class="rtext">${reply.reply_text}</span>
+<i class="fa fa-trash" aria-hidden="true" onclick="deleteReply(this)"  style="font-size: large;float: right; display: inline;"></i>
+<i class="fa fa-pencil-square-o" aria-hidden="true"  onclick="modifyReply(this)" style="font-size: large; float: right; display: table;"></i></div>
+            </div>`
+            }
+        }
+
+        document.querySelector(".direct-chat-messages").innerHTML = str
+
+
+        const pagination = document.querySelector(".pagination")
+        let pageStr = ""
+
+        if (replyPageResponse.prev) {
+            pageStr += `<li class="page-item"><a class="page-link"  href="javascript:getList(${replyPageResponse.start - 1})"  tabindex="-1">Previous</a></li>`
+        }
+
+        for (let i = replyPageResponse.start; i <= replyPageResponse.end; i++) {
+            pageStr += `<li class="page-item ${i == replyPageResponse.page ? "active" : ""} "><a class="page-link" href="javascript:getList(${i})" tabindex="-1">${i}</a></li>`
+        }
+
+
+        if (replyPageResponse.next) {
+            pageStr += `<li class="page-item"><a class="page-link"  href="javascript:getList(${replyPageResponse.end + 1})"  tabindex="-1">Next</a></li>`
+        }
+
+        pagination.innerHTML = pageStr
+
+    }
+
+    function btnClick(rno) {
+
+        reModalDiv.find("input[name='rno']").attr("value",rno)
+
+        console.log(reModalDiv.html())
+
+        reModalDiv.modal("show")
+
+
+    }
+
+
+    document.querySelector(".operBtns").addEventListener("click", function () {
+
+        let group_id = 0;
+
+        const replyObj = {
+            sno:sno,
+            replyer:document.querySelector("input[name='replyer']").value,
+            reply_text:document.querySelector("input[name='reply_text']").value,
+
+
+        }
+
+        async function registerAjax() {
+            const response = await axios.post("/replies",replyObj)
+            const replyPageResponse = await response.data
+
+
+            makeListAndPaging(replyPageResponse)
+
+
+            document.querySelector("input[name='replyer']").value =""
+            document.querySelector("input[name='reply_text']").value =""
+        }
+
+        registerAjax()
+
+
+    }, false)
+
+
+    document.querySelector(".operBtns2").addEventListener("click", function () {
+
+        const replyer = reModalDiv.find("input[name='replyer']").val()
+        const reply_text = reModalDiv.find("input[name='reply_text']").val()
+        const rno   = reModalDiv.find("input[name='rno']").val()
+
+
+        let group_id = rno;
+
+        const replyObj = {sno, replyer, reply_text, group_id}
+
+
+
+        async function registerAjax() {
+            const response = await axios.post("/replies",replyObj)
+            const replyPageResponse = await response.data
+
+
+            makeListAndPaging(replyPageResponse)
+
+            reModalDiv.modal('hide')
+
+            $('#replyer').val('')
+            $('#reply_text').val('')
+        }
+
+        registerAjax()
+
+
+    }, false)
+
+
+
+    let CloneReply = null;
+    let targetLi = null;
+
+    function modifyReply(ele) {
+
+        const targetDiv = ele.closest(".replyBox")
+
+
+        if(targetLi === null) {
+            targetLi = targetDiv
+        }else if(targetLi !== targetDiv) {
+            targetLi.querySelector("div").remove()
+            targetLi.appendChild(CloneReply)
+            targetLi = targetDiv
+        }
+
+        CloneReply = targetDiv.cloneNode(true)
+
+        console.log(CloneReply)
+
+        const replyRno = targetDiv.getAttribute("data-rno")
+        const replyText = targetDiv.querySelector(".rtext").innerHTML
+
+        const modifyForm = `<div><input type="text" class="editText" value="${replyText}" style="width: 200px;">
+<button type="button" class="btn btn-sm" onclick="modifyReplySend(this)" style="padding: initial;font-size: inherit;">완료</button>
+<button type="button" class="btn btn-sm" onclick="cancelModifyReply(this)" style="padding: initial;font-size: inherit;">취소</button>
+</div>`
+
+        targetDiv.innerHTML = modifyForm
+
+
+    }
+
+
+    function cancelModifyReply(ele) {
+        const targetDiv = ele.closest(".replyBox")
+        targetDiv.innerHTML = CloneReply.innerHTML
+
+    }
+
+
+    function deleteReply(ele) {
+        const targetDiv = ele.closest(".replyBox")
+        const rno = targetDiv.getAttribute("data-rno")
+
+        async function sendDeleteReply() {
+
+            const response = await axios.delete(`/replies/${sno}/${rno}?page=${replyPage}&size=${replySize}`)
+            const data = await response.data
+            console.log(data)
+
+            deleteModal.modal("show")
+
+            makeListAndPaging(data)
+
+        }
+
+        sendDeleteReply()
+    }
+
+    function modifyReplySend(ele) {
+        const targetDiv = ele.closest(".replyBox")
+        const rno = targetDiv.getAttribute("data-rno")
+        const reply_text = targetDiv.querySelector(".editText").value
+
+        console.log(reply_text)
+
+        const replyObj = {rno,reply_text,sno}
+
+        console.log(replyObj)
+
+        async function updateReply() {
+            const response = await axios.put(`/replies/${sno}/${rno}?page=${replyPage}&size=${replySize}`,replyObj)
+
+            const data = await response.data
+            console.log(data)
+
+            modifyModal.modal("show")
+
+            makeListAndPaging(data)
+        }
+        updateReply()
+    }
+
+
+
+    getList(-1)
+
+    </script>
+
+
+</th:block>

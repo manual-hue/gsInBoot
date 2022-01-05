@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+
+
+<div  layout:fragment="content">
+
+
+    <div class="card-header">
+        MESSAGE CONTENT
+    </div>
+    <div class="card-body">
+
+
+        <div class="container bootstrap snippets bootdeys ssss">
+            <div>
+                <div>
+                    <div>
+                        <div  data-background="color" data-color="blue" data-radius="none" style="padding:8px">
+                            <div class="content">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">send</span>
+                                    <input type="text" name="send" class="form-control" style="background-color: transparent;" readonly
+                                           th:value="${dto.send}"  >
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">receive</span>
+                                    <input type="text" name="receive" class="form-control"  style="background-color: transparent;" readonly
+                                           th:value="${dto.receive}"   >
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">send_time</span>
+                                    <input type="text" name="send_time" class="form-control"  style="background-color: transparent;" readonly
+                                           th:value="${#temporals.format(dto.send_time, 'yyyy-MM-dd HH:mm:ss')}" >
+                                </div>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">content</span>
+                                    <textarea class="form-control" aria-label="With textarea" name="content" rows="10" th:text="${dto.content}" readonly  style="background-color: transparent;" ></textarea>
+                                </div>
+
+                            </div>
+                        </div> <!-- end card -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <Style>
+        .sts1 {
+            width: fit-content;
+            margin: auto;
+            display: block;
+        }
+    </Style>
+
+
+    <button onclick="moveReplyPage()" type="button" class="btn btn-success sts1">REPLY</button>
+
+    
+</div>
+
+<th:block  layout:fragment="script">
+
+    <script th:inline="javascript">
+
+        function moveReplyPage() {
+
+            let uri = "";
+
+
+          location.href = `/messeage/register`
+
+        }
+    </script>
+
+</th:block>
+

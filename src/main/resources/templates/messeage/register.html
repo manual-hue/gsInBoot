@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout2">
+
+
+<div layout:fragment="content">
+    <div class="card-header">
+        SEND A MESSAGE
+    </div>
+
+    <div class="card-body">
+        <form th:action="@{/messeage/register}" method="post">
+
+
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">send</span>
+                <input type="text" name="send" class="form-control" placeholder="send" th:value="${#authentication.getPrincipal().mid}" readonly>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">receive</span>
+                <input type="text" name="receive" class="form-control" placeholder="receive">
+            </div>
+
+            <div class="input-group mb-3">
+                <span class="input-group-text">Content</span>
+                <textarea class="form-control" aria-label="With textarea" name="content" rows="10"></textarea>
+            </div>
+
+
+            <div class="my-4">
+
+                <div class="float-end hiddens" style="text-align: center">
+                    <button type="reset" class="btn btn-dark btn-round">CANCEL</button>
+                    <button type="submit" class="btn btn-primary btn-round">SEND</button>
+                    <a href="http://localhost:8080/messeage/list?receive=+ sec:authentication='principal.username'">
+                        <button type="button" class="btn btn-warning btn-round">LIST</button>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+
