@@ -14,7 +14,7 @@
 ### 개발 환경
 > 
 - **Spring Boot**, Spring Security
-- JPA/Hibernate, HikariCP, REST-API
+- JPA/Hibernate, HikariCP, REST-API, JUnit4, Querydsl
 - Thymeleaf, JQuery, AJAX, Axios, Bootstrap
 - MySQL, AWS
 - IntelliJ, Webstorm, Postman
